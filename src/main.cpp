@@ -1,9 +1,12 @@
 #include <iostream>
+#include <vector>
+#include <fstream>
 #include "LinearLSMFunc.hpp"
+#include "Loaders.hpp"
 
 int main() {
-    std::vector<LSM::Point> data {{1.0, 2.0}, {1.1, 0.0}, {0.0, 0.0}};
+    auto data = LSM::loadStringFromCSV(std::cin);
     LSM::LinearFunction func;
     func.findParameters(data);
-    std::cout << func(1.0) << std::endl;
+    std::cout << func(1);
 }
