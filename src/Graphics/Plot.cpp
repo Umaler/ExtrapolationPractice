@@ -64,12 +64,18 @@ void Plot::drawPoint(Point point, const Cairo::RefPtr<Cairo::Context>& cr) {
 
 bool Plot::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->save();
-    for(auto i : functions) {
-        drawFunction(i, cr);
-    }
-    for(auto i : points) {
-        drawPoint(i, cr);
-    }
+        for(auto i : functions) {
+            drawFunction(i, cr);
+        }
+        for(auto i : points) {
+            drawPoint(i, cr);
+        }
+    cr->restore();
+
+    cr->save();
+        cr->set_line_width(funcLineWidth);
+
+        cr->stroke();
     cr->restore();
 
     return true;

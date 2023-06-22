@@ -41,6 +41,7 @@ protected:
 
 
 
+    double funcLineWidth = 10.0;
     Point LDCornerPosition {0.0, -1.0};    //Left Down Corner
     double maxX = 6.28;
     std::vector<Point> points;
