@@ -5,9 +5,9 @@
 #include <memory>
 #include <functional>
 
-namespace LSM {
+#include "LSMFunction.hpp"
 
-class Point;
+namespace LSM {
 
 class Plot : public Gtk::DrawingArea {
 public:
@@ -20,6 +20,9 @@ public:
 
     void update();
 
+    void setCornerPosition(Point point);    //set "viewport" position.
+    Point getCornerPosition() const;
+
     void setMaxX(double newMaxX);
     double getMaxX() const;
 
@@ -27,17 +30,19 @@ public:
 
 protected:
 
-    void drawFunction(std::function<double(double)> func, const Cairo::RefPtr<Cairo::Context>& cr);
-    void drawPoint(Point point, const Cairo::RefPtr<Cairo::Context>& cr);
-
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-    void setPixel(Glib::RefPtr<Gdk::Pixbuf> imageptr, int x, int y, Gdk::RGBA color);
+    void drawFunction(std::function<double(double)> func, const Cairo::RefPtr<Cairo::Context>& cr);
+    void drawPoint(Point point, const Cairo::RefPtr<Cairo::Context>& cr);
+    void setPixel(Glib::RefPtr<Gdk::Pixbuf> imageptr, Point point, Gdk::RGBA color);
+
+    Point realToDisplay(Point point) const; //transform coordinates from "real" to display coordinates
+    Point displayToReal(Point point) const;
 
 
 
-    double maxX = 10;
-
+    Point LDCornerPosition {0.0, -1.0};    //Left Down Corner
+    double maxX = 6.28;
     std::vector<Point> points;
     std::vector<std::function<double(double)>> functions;
 
