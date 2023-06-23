@@ -18,7 +18,7 @@ MainWindow::MainWindow() :
     plot("X", "Y")
 {
     set_default_size(720, 580);
-    set_title("Plot test");
+    set_title("Extrapolation");
     canvas.set_hexpand(true);
     canvas.set_vexpand(true);
 
