@@ -1,8 +1,14 @@
 #binaries
 bin
 obj
+extrapolation
 
 #Code::Blocks files
 *.cbp
 *.layout
 *.depend
+
+#CMake files
+CMakeFiles
+*.cmake
+Makefile
