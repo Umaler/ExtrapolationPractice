@@ -28,4 +28,12 @@ std::vector<LSM::Point> loadStringFromCSV(std::istream& input) {
     return result;
 }
 
+std::vector<std::vector<LSM::Point>> loadSetFromCSV(std::istream& input) {
+    std::vector<std::vector<LSM::Point>> result;
+    while(!input.eof()) {
+        result.emplace_back(std::move(loadStringFromCSV(input)));
+    }
+    return result;
+}
+
 }

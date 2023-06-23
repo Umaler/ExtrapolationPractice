@@ -23,11 +23,10 @@ void LinearFunction::findParameters(const std::vector<Point>& data) {
     if(mainDet == 0)
         throw std::runtime_error("Main determinant is 0");
 
-    double kDet = data.size() * Sxy - Sx * Sy;
-    double bDet = Sxx * Sy - Sx * Sxy;
+    double n = data.size();
 
-    k = kDet / mainDet;
-    b = bDet / mainDet;
+    k = (n * Sxy - Sx * Sy) / (n * Sxx - Sx * Sx);
+    b = (Sy - k * Sx) / n;
 }
 
 }
