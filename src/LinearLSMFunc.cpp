@@ -29,4 +29,9 @@ void LinearFunction::findParameters(const std::vector<Point>& data) {
     b = (Sy - k * Sx) / n;
 }
 
+void LinearFunction::printCoef(std::ostream& output) {
+    output  << "k = " << k << "\n"
+            << "b = " << b;
+}
+
 }

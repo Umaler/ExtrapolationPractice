@@ -7,6 +7,7 @@
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/textbuffer.h>
+#include <gtkmm/frame.h>
 #include <vector>
 #include <memory>
 
@@ -28,11 +29,16 @@ private:
 
     Gtk::Grid grid;
     Gtk::Box box;
+    Gtk::Frame funcFrame;
+    Gtk::Box funcBox;
+    Gtk::Frame coefFrame;
 
     Gtk::Button chooseFileButton;
     Gtk::SpinButton xChooser;
     Gtk::TextView funcResults;
     Glib::RefPtr<Gtk::TextBuffer> funcResultsBuffer;
+    Gtk::TextView funcCoefs;
+    Glib::RefPtr<Gtk::TextBuffer> funcCoefsBuffer;
 
     std::unique_ptr<LSM::Function> func;
     std::unique_ptr<Gtk::PLplot::PlotData2D> dataPoints;

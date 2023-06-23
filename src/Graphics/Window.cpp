@@ -10,8 +10,9 @@ namespace LSM {
 
 MainWindow::MainWindow() :
     box(Gtk::ORIENTATION_VERTICAL),
+    funcBox(Gtk::ORIENTATION_VERTICAL),
     chooseFileButton("Выберите файл"),
-    xChooser(Gtk::Adjustment::create(0.0, -1000, 1000)),
+    xChooser(Gtk::Adjustment::create(0.0, -1000, 1000, 0.1, 5)),
     func(std::make_unique<LSM::LinearFunction>()),
     canvas(),
     plot("X", "Y")
@@ -28,14 +29,25 @@ MainWindow::MainWindow() :
     funcResults.set_buffer(funcResultsBuffer);
     funcResults.set_editable(false);
 
+    funcCoefsBuffer = Gtk::TextBuffer::create();
+    funcCoefs.set_buffer(funcCoefsBuffer);
+    funcCoefs.set_editable(false);
+
     grid.attach(chooseFileButton, 0, 0);
-    box.add(funcResults);
-    box.add(xChooser);
+    funcFrame.set_label("Функция:");
+    funcBox.add(funcResults);
+    funcBox.add(xChooser);
+    funcFrame.add(funcBox);
+    box.add(funcFrame);
+    coefFrame.set_label("Коэффициенты:");
+    coefFrame.add(funcCoefs);
+    box.add(coefFrame);
     grid.attach(box, 0, 1);
     grid.attach(canvas, 1, 0, 1, 2);
 
     add(grid);
 
+    xChooser.set_digits(2);
     xChooser.signal_value_changed().connect( sigc::mem_fun(*this, &MainWindow::on_spinbutton_digits_changed) );
     chooseFileButton.signal_clicked().connect( sigc::mem_fun(*this, &MainWindow::on_button_file_clicked) );
 
@@ -88,6 +100,9 @@ void MainWindow::on_file_dialog_response(int response_id, Gtk::FileChooserDialog
             plot.add_data(*dataPoints);
 
             func->findParameters(arr);
+            std::stringstream ss;
+            func->printCoef(ss);
+            funcCoefsBuffer->set_text(ss.str());
 
             const int pslices = maxx + 10;
             const int mslices = minx - 10;
@@ -102,6 +117,8 @@ void MainWindow::on_file_dialog_response(int response_id, Gtk::FileChooserDialog
                 plot.remove_data(*funcPoints);
             funcPoints.reset(new Gtk::PLplot::PlotData2D(x, y, Gdk::RGBA("red")));
             plot.add_data(*funcPoints);
+
+            on_spinbutton_digits_changed();
             break;
         }
         case Gtk::ResponseType::RESPONSE_CANCEL:
