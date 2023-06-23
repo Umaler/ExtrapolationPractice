@@ -12,3 +12,4 @@ extrapolation
 CMakeFiles
 *.cmake
 Makefile
+CMakeCache.txt
