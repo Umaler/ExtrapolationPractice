@@ -3,11 +3,16 @@
 #include "Loaders.hpp"
 #include "LinearLSMFunc.hpp"
 #include <fstream>
+#include <sstream>
+#include <numeric>
 
 namespace LSM {
 
 MainWindow::MainWindow() :
+    box(Gtk::ORIENTATION_VERTICAL),
     chooseFileButton("Выберите файл"),
+    xChooser(Gtk::Adjustment::create(0.0, -1000, 1000)),
+    func(std::make_unique<LSM::LinearFunction>()),
     canvas(),
     plot("X", "Y")
 {
@@ -19,11 +24,19 @@ MainWindow::MainWindow() :
     canvas.add_plot(plot);
     plot.hide_legend();
 
+    funcResultsBuffer = Gtk::TextBuffer::create();
+    funcResults.set_buffer(funcResultsBuffer);
+    funcResults.set_editable(false);
+
     grid.attach(chooseFileButton, 0, 0);
-    grid.attach(canvas, 1, 0);
+    box.add(funcResults);
+    box.add(xChooser);
+    grid.attach(box, 0, 1);
+    grid.attach(canvas, 1, 0, 1, 2);
 
     add(grid);
 
+    xChooser.signal_value_changed().connect( sigc::mem_fun(*this, &MainWindow::on_spinbutton_digits_changed) );
     chooseFileButton.signal_clicked().connect( sigc::mem_fun(*this, &MainWindow::on_button_file_clicked) );
 
     show_all();
@@ -48,11 +61,6 @@ void MainWindow::on_button_file_clicked() {
     filter_csv->add_mime_type("text/csv");
     dialog->add_filter(filter_csv);
 
-    auto filter_any = Gtk::FileFilter::create();
-    filter_any->set_name("Any files");
-    filter_any->add_pattern("*");
-    dialog->add_filter(filter_any);
-
     dialog->show();
 }
 
@@ -63,8 +71,14 @@ void MainWindow::on_file_dialog_response(int response_id, Gtk::FileChooserDialog
             std::vector<double> y;
 
             std::ifstream file(dialog->get_file()->get_path());
+            double minx = std::numeric_limits<double>::max();
+            double maxx = std::numeric_limits<double>::min();
             auto arr = (LSM::loadStringFromCSV(file));
             for(auto i : arr) {
+                if(i.x > maxx)
+                    maxx = i.x;
+                else if(i.x < minx)
+                    minx = i.x;
                 x.push_back(i.x);
                 y.push_back(i.y);
             }
@@ -73,16 +87,16 @@ void MainWindow::on_file_dialog_response(int response_id, Gtk::FileChooserDialog
             dataPoints.reset(new PointPlotData2D(x, y, Gdk::RGBA("blue"), Gtk::PLplot::LineStyle::CONTINUOUS, 3));
             plot.add_data(*dataPoints);
 
-            LSM::LinearFunction func;
-            func.findParameters(arr);
+            func->findParameters(arr);
 
-            const int slices = x.size() + 20;
+            const int pslices = maxx + 10;
+            const int mslices = minx - 10;
 
             x.clear();
             y.clear();
-            for(int i = 0; i < slices; i++) {
+            for(int i = mslices; i < pslices; i++) {
                 x.push_back(i);
-                y.push_back(func(i));
+                y.push_back((*func)(i));
             }
             if(funcPoints)
                 plot.remove_data(*funcPoints);
@@ -96,6 +110,14 @@ void MainWindow::on_file_dialog_response(int response_id, Gtk::FileChooserDialog
             break;
     }
     delete dialog;
+}
+
+void MainWindow::on_spinbutton_digits_changed() {
+    if(!dataPoints)
+        return;
+    std::stringstream ss;
+    ss << (*func)(xChooser.get_value());
+    funcResultsBuffer->set_text(ss.str());
 }
 
 MainWindow::~MainWindow() = default;
