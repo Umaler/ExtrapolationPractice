@@ -1,4 +1,7 @@
+pkg-config - for building
+
 gtkmm-3.* 
 	and all its dependencies
 gtkmm-PLPlot-2.*
-	cairo driver
+
+cairo driver - in runtime
