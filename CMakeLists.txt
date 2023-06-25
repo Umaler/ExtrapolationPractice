@@ -7,7 +7,13 @@ pkg_check_modules(GTKMM gtkmm-3.0)
 pkg_check_modules(GTKPlot gtkmm-plplot-2.0)
 pkg_check_modules(PLPLOT plplot-c++)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+if(WINDOWS_COMPILING)
+     set(CMAKE_C_COMPILER "x86_64-w64-mingw32-gcc-win32")
+     set(CMAKE_CXX_COMPILER "x86_64-w64-mingw32-g++-win32")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I. -std=c++17 -lwinpthread -static-libgcc -static-libstdc++")
+else()
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+endif()
 
 file(GLOB SOURCES CONFIGURE_DEPENDS
      "src/*.cpp"
