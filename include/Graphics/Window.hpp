@@ -25,13 +25,15 @@ public:
 private:
     void on_button_file_clicked();
     void on_file_dialog_response(int response_id, Gtk::FileChooserDialog* dialog);
-    void on_spinbutton_digits_changed();
+    void on_xChooser_digits_changed();
+    void on_setsChooser_digits_changed();
 
     Gtk::Grid grid;
     Gtk::Box box;
     Gtk::Frame funcFrame;
     Gtk::Box funcBox;
     Gtk::Frame coefFrame;
+    Gtk::Frame setsFrame;
 
     Gtk::Button chooseFileButton;
     Gtk::SpinButton xChooser;
@@ -39,10 +41,13 @@ private:
     Glib::RefPtr<Gtk::TextBuffer> funcResultsBuffer;
     Gtk::TextView funcCoefs;
     Glib::RefPtr<Gtk::TextBuffer> funcCoefsBuffer;
+    Gtk::SpinButton setsChooser;
 
     std::unique_ptr<LSM::Function> func;
     std::unique_ptr<Gtk::PLplot::PlotData2D> dataPoints;
     std::unique_ptr<Gtk::PLplot::PlotData2D> funcPoints;
+
+    std::vector<std::vector<LSM::Point>> sets;
 
     Gtk::PLplot::Canvas canvas;
     Gtk::PLplot::Plot2D plot;

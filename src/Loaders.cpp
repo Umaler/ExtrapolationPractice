@@ -31,7 +31,9 @@ std::vector<LSM::Point> loadStringFromCSV(std::istream& input) {
 std::vector<std::vector<LSM::Point>> loadSetFromCSV(std::istream& input) {
     std::vector<std::vector<LSM::Point>> result;
     while(!input.eof()) {
-        result.emplace_back(std::move(loadStringFromCSV(input)));
+        auto set = loadStringFromCSV(input);
+        if(set.size() != 0)
+            result.emplace_back(std::move(set));
     }
     return result;
 }
