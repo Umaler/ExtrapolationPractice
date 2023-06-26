@@ -68,15 +68,20 @@ void MainWindow::on_button_file_clicked() {
     dialog->add_button("_Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
     dialog->add_button("_Open", Gtk::ResponseType::RESPONSE_OK);
 
+    auto filter_csv = Gtk::FileFilter::create();
+    filter_csv->set_name("CSV files");
+    filter_csv->add_mime_type("text/csv");
+    dialog->add_filter(filter_csv);
+
     auto filter_text = Gtk::FileFilter::create();
     filter_text->set_name("Text files");
     filter_text->add_mime_type("text/plain");
     dialog->add_filter(filter_text);
 
-    auto filter_csv = Gtk::FileFilter::create();
-    filter_csv->set_name("CSV files");
-    filter_csv->add_mime_type("text/csv");
-    dialog->add_filter(filter_csv);
+    auto filter_all = Gtk::FileFilter::create();
+    filter_all->set_name("All");
+    filter_all->add_pattern("*");
+    dialog->add_filter(filter_all);
 
     dialog->show();
 }
